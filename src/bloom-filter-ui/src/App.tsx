@@ -2,15 +2,18 @@ import { useState } from 'react'
 import { useUsernameCheck } from './hooks/useUsernameCheck'
 import { useFilterStats } from './hooks/useFilterStats'
 import { useVisualize } from './hooks/useVisualize'
+import { useUsernameList } from './hooks/useUsernameList'
 import { BitGridVisualization } from './components/BitGridVisualization'
 import { HashVisualizer } from './components/HashVisualizer'
 import { StatsPanel } from './components/StatsPanel'
+import { UsernameListPanel } from './components/UsernameListPanel'
 import './App.css'
 
 function App() {
   const { username, setUsername, result, loading } = useUsernameCheck(300)
   const stats = useFilterStats(1000)
   const visualize = useVisualize(username, 300)
+  const users = useUsernameList(2000)
   const [registerStatus, setRegisterStatus] = useState<string | null>(null)
   const [registering, setRegistering] = useState(false)
 
@@ -104,6 +107,10 @@ function App() {
               bits={stats.bitsSample}
               highlightPositions={visualize?.positions ?? []}
             />
+          </div>
+          <div className="section">
+            <h3>Usernames registrados</h3>
+            <UsernameListPanel items={users} onPick={setUsername} />
           </div>
         </section>
       )}

@@ -13,3 +13,8 @@ public record RegisterResponse(
     string Username,
     DateTimeOffset CreatedAt
 );
+
+public record UsernameListItem(
+    string Username,
+    DateTimeOffset CreatedAt
+);
