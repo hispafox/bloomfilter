@@ -18,10 +18,15 @@ Es un capítulo opcional / post-course follow-up de ~15-20 min que se graba como
 Antes de empezar, el repo debe estar en:
 
 - Rama activa: `module-06/complete` (o posterior).
-- `dotnet build` limpio, `dotnet test` verde, `npm run build` OK.
+- `dotnet build` limpio, `dotnet test` verde (17 tests), `npm run build` OK.
 - El archivo `demo/bloom-filter-demo.jsx` existe en el repo (ya está desde `main`).
 - Los 3 agents del M4 están disponibles (`.github/agents/*.agent.md`).
 - Los 3 skills del M3 están disponibles (`.github/skills/*/SKILL.md`).
+- **El M6 ya incluye un seed de 40 usernames** en `Program.cs` (mismos del
+  `demo/bloom-filter-demo.jsx`). Al arrancar, `/api/username/stats` devuelve
+  `totalItems: 40` y el bit array tiene bits encendidos de entrada → el
+  `BitGridVisualization` del M7 no arranca en blanco. **No hay que añadir
+  ningún seed en M7.**
 
 Si alguna de estas condiciones no se cumple, **PARAR** y avisar. No improvisar.
 
