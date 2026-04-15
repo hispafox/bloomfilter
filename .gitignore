@@ -3,6 +3,19 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Claude Code / MCP (local only, contains secrets)
+.claude/
+.mcp.json
+
+# .NET language server cache
+*.lscache
+
+# Frontend build output
+dist/
+
+# Course-local artifacts
+/TestResults/
+
 # User-specific files
 *.rsuser
 *.suo

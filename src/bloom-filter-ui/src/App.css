@@ -1,0 +1,112 @@
+:root {
+  --bg: #0d0d17;
+  --surface: #141422;
+  --border: #1a1a2e;
+  --text: #ccd6f6;
+  --text-muted: #5a6380;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --teal: #1abc9c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.container {
+  max-width: 480px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.username-input {
+  width: 100%;
+  padding: 14px 48px 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.username-input:focus {
+  border-color: var(--teal);
+}
+
+.indicator {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.indicator.loading { color: var(--text-muted); animation: spin 1s linear infinite; }
+.indicator.available { color: var(--green); }
+.indicator.taken { color: var(--red); }
+
+@keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+.result {
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.result.available { background: #0d3320; border: 1px solid #16a08560; }
+.result.taken { background: #3d1515; border: 1px solid #e74c3c60; }
+.result span { color: var(--text-muted); font-size: 12px; }
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--teal);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.register-btn:disabled { opacity: 0.4; cursor: default; }
+.register-btn:hover:not(:disabled) { opacity: 0.9; }
+
+.register-status {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.register-status.success { background: #0d3320; color: var(--green); }
+.register-status.error { background: #3d1515; color: var(--red); }
