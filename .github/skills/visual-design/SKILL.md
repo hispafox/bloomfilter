@@ -77,6 +77,21 @@ bits activos → ~99% probabilidad de que existe").
 Diagrama horizontal: React → Bloom Filter → ¿Probable? → SQL Server. Cada nodo
 es una card con icono, label, sublabel y color temático.
 
+### 6. `UsernameListPanel`
+
+Lista de pills clicables con todos los usernames registrados (consumiendo
+`GET /api/username/list`). Al clicar una pill, setea el username en el
+input del `useUsernameCheck`, lo que dispara automáticamente check +
+visualize + iluminación de bits en el `BitGridVisualization`.
+
+Props:
+- `items: { username, createdAt }[]` — desde `useUsernameList()` (polling 2s)
+- `onPick: (username: string) => void` — el `setUsername` del `useUsernameCheck`
+
+Layout: header con contador teal grande + label uppercase. Debajo, grid
+flex de pills de 12px, `font-mono`, fondo `--surface-alt`, hover teal con
+scale(0.96) en active. Max-height 240px con scroll vertical.
+
 ## Contratos con el API
 
 ### `GET /api/username/stats`
@@ -115,6 +130,18 @@ Retorna todas las posiciones generadas por los `hashCount` hashes del filtro.
 El cliente las usa para alimentar `HashVisualizer` y para resaltar los bits
 correspondientes en el `BitGridVisualization` (tras normalizarlas al rango
 0-255 con módulo).
+
+### `GET /api/username/list`
+
+Devuelve los usernames registrados, ordenados cronológicamente, máximo 200.
+Usado por el `UsernameListPanel` para verificación visual.
+
+```json
+[
+  { "username": "pedro", "createdAt": "2026-04-15T08:30:00Z" },
+  { "username": "admin", "createdAt": "2026-04-15T08:30:00Z" }
+]
+```
 
 ## Polling
 
