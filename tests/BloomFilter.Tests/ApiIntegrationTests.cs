@@ -125,6 +125,21 @@ public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task ListUsernames_ShouldIncludeSeededEntries()
+    {
+        var response = await _client.GetAsync("/api/username/list");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var items = await response.Content.ReadFromJsonAsync<List<UsernameListItem>>();
+
+        items.Should().NotBeNull();
+        items!.Should().NotBeEmpty();
+        // El seed del Program.cs registra 40 usernames al arrancar.
+        items.Select(i => i.Username).Should().Contain("pedro");
+        items.Select(i => i.Username).Should().Contain("admin");
+    }
+
+    [Fact]
     public async Task OpenApi_Document_ShouldBeAvailable_InDevelopment()
     {
         // WebApplicationFactory arranca en Production por defecto.

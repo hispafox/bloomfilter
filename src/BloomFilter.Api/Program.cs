@@ -199,6 +199,21 @@ usernameApi.MapPost("/register", async (
 .ProducesProblem(StatusCodes.Status400BadRequest)
 .ProducesProblem(StatusCodes.Status409Conflict);
 
+// Lista de usernames registrados (para panel de verificación visual en la UI)
+usernameApi.MapGet("/list", async (AppDbContext db) =>
+{
+    var users = await db.Users
+        .OrderBy(u => u.CreatedAt)
+        .Take(200)
+        .Select(u => new UsernameListItem(u.Username, u.CreatedAt))
+        .ToListAsync();
+
+    return Results.Ok(users);
+})
+.WithTags("Username")
+.WithName("ListUsernames")
+.Produces<List<UsernameListItem>>(StatusCodes.Status200OK);
+
 // Stats del filtro (debug/demo) — incluye bitsSample para visualización
 usernameApi.MapGet("/stats", (BloomFilter<string> filter) =>
 {
