@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using BloomFilter.Api;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace BloomFilter.Tests;
@@ -121,5 +122,23 @@ public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
         var response = await _client.GetAsync("/api/username/visualize/ab");
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task OpenApi_Document_ShouldBeAvailable_InDevelopment()
+    {
+        // WebApplicationFactory arranca en Production por defecto.
+        // MapOpenApi() está dentro del if (IsDevelopment), así que hay que forzar el entorno.
+        using var factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder => builder.UseEnvironment("Development"));
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync("/openapi/v1.json");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        string json = await response.Content.ReadAsStringAsync();
+        json.Should().Contain("\"openapi\"");
+        json.Should().Contain("/api/username/check/{name}");
+        json.Should().Contain("/api/username/register");
     }
 }

@@ -7,6 +7,9 @@
 .claude/
 .mcp.json
 
+# DevLauncher (local profiles)
+.devlauncher/
+
 # .NET language server cache
 *.lscache
 

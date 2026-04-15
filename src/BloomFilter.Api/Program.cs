@@ -3,6 +3,7 @@ using BloomFilter.Api;
 using BloomFilter.Api.Data;
 using BloomFilter.Api.DataStructures;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,11 +54,25 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
+// OpenAPI spec generation (used by Scalar UI in Development)
+builder.Services.AddOpenApi();
+
 // --- App ---
 
 var app = builder.Build();
 
 app.UseCors();
+
+// Interactive API documentation (Scalar UI) — dev-only for safety.
+// Spec: /openapi/v1.json   UI: /scalar/v1
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("Bloom Filter API");
+    });
+}
 
 app.MapGet("/", () => "Bloom Filter API is running");
 
@@ -101,7 +116,11 @@ usernameApi.MapGet("/check/{name}", (string name, BloomFilter<string> filter) =>
             ? "Probablemente ocupado — confirmar con registro"
             : "Disponible — el filtro garantiza que no existe"
     ));
-});
+})
+.WithTags("Username")
+.WithName("CheckUsername")
+.Produces<UsernameCheckResult>(StatusCodes.Status200OK)
+.ProducesProblem(StatusCodes.Status400BadRequest);
 
 // Registro real (DB + actualización del filtro)
 usernameApi.MapPost("/register", async (
@@ -173,7 +192,12 @@ usernameApi.MapPost("/register", async (
             detail = "Registrado por otro usuario simultáneamente"
         });
     }
-});
+})
+.WithTags("Username")
+.WithName("RegisterUsername")
+.Produces<RegisterResponse>(StatusCodes.Status201Created)
+.ProducesProblem(StatusCodes.Status400BadRequest)
+.ProducesProblem(StatusCodes.Status409Conflict);
 
 // Stats del filtro (debug/demo) — incluye bitsSample para visualización
 usernameApi.MapGet("/stats", (BloomFilter<string> filter) =>
@@ -191,7 +215,9 @@ usernameApi.MapGet("/stats", (BloomFilter<string> filter) =>
         memorySizeBytes = filter.Size / 8,
         bitsSample = filter.GetBitsSample(256)
     });
-});
+})
+.WithTags("Filter")
+.WithName("GetStats");
 
 // Visualización pedagógica — posiciones de los hashes para un username
 usernameApi.MapGet("/visualize/{name}", (string name, BloomFilter<string> filter) =>
@@ -215,7 +241,10 @@ usernameApi.MapGet("/visualize/{name}", (string name, BloomFilter<string> filter
         username = normalized,
         positions
     });
-});
+})
+.WithTags("Filter")
+.WithName("VisualizeUsername")
+.ProducesProblem(StatusCodes.Status400BadRequest);
 
 app.Run();
 
