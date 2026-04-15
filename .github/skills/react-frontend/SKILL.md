@@ -72,3 +72,11 @@ Input con debounce de 300ms. Indicador visual:
 
 Botón de Register que hace POST /api/username/register.
 Manejar 201 (éxito), 409 (duplicado) y errores de red.
+
+## Visualización pedagógica (M7 extension)
+
+Para componentes que visualizan el estado interno del Bloom Filter (bit grid,
+hash positions, stats panel), consulta el skill `visual-design`. Ese skill
+contiene la paleta, tipografía y contratos con los endpoints
+`/api/username/stats` (ampliado con `bitsSample`) y
+`/api/username/visualize/{name}`.
