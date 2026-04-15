@@ -93,4 +93,33 @@ public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.GetAsync("/api/username/stats");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
+
+    [Fact]
+    public async Task Stats_ShouldIncludeBitsSample()
+    {
+        var response = await _client.GetAsync("/api/username/stats");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        using var doc = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        doc.RootElement.TryGetProperty("bitsSample", out var bitsSample).Should().BeTrue();
+        bitsSample.GetArrayLength().Should().Be(256);
+    }
+
+    [Fact]
+    public async Task Visualize_ValidName_ShouldReturnPositions()
+    {
+        var response = await _client.GetAsync("/api/username/visualize/testuser");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        using var doc = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        doc.RootElement.TryGetProperty("positions", out var positions).Should().BeTrue();
+        positions.GetArrayLength().Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task Visualize_InvalidName_ShouldReturn400()
+    {
+        var response = await _client.GetAsync("/api/username/visualize/ab");
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

@@ -175,7 +175,7 @@ usernameApi.MapPost("/register", async (
     }
 });
 
-// Stats del filtro (debug/demo)
+// Stats del filtro (debug/demo) — incluye bitsSample para visualización
 usernameApi.MapGet("/stats", (BloomFilter<string> filter) =>
 {
     double fillRatio = 1.0 - Math.Pow(1.0 - 1.0 / filter.Size, (double)filter.HashCount * filter.Count);
@@ -186,9 +186,34 @@ usernameApi.MapGet("/stats", (BloomFilter<string> filter) =>
         totalItems = filter.Count,
         filterSizeBits = filter.Size,
         hashFunctions = filter.HashCount,
-        estimatedFillRatio = Math.Round(fillRatio, 4),
-        estimatedFalsePositiveRate = Math.Round(fpRate, 6),
-        memorySizeBytes = filter.Size / 8
+        estimatedFillRatio = Math.Round(fillRatio, 6),
+        estimatedFalsePositiveRate = Math.Round(fpRate, 8),
+        memorySizeBytes = filter.Size / 8,
+        bitsSample = filter.GetBitsSample(256)
+    });
+});
+
+// Visualización pedagógica — posiciones de los hashes para un username
+usernameApi.MapGet("/visualize/{name}", (string name, BloomFilter<string> filter) =>
+{
+    string normalized = name.Trim().ToLowerInvariant();
+
+    if (normalized.Length < 3 || normalized.Length > 50)
+    {
+        return Results.BadRequest(new
+        {
+            type = "https://tools.ietf.org/html/rfc9457",
+            title = "Username inválido",
+            status = 400,
+            detail = "El username debe tener entre 3 y 50 caracteres"
+        });
+    }
+
+    int[] positions = filter.GetPositionsFor(normalized);
+    return Results.Ok(new
+    {
+        username = normalized,
+        positions
     });
 });
 

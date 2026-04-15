@@ -91,6 +91,36 @@ public sealed class BloomFilter<T> where T : notnull
         }
     }
 
+    /// <summary>
+    /// Devuelve una muestra de los primeros <paramref name="sampleSize"/> bits del filtro
+    /// como array de 0/1. Útil para visualización pedagógica en el frontend.
+    /// </summary>
+    public int[] GetBitsSample(int sampleSize = 256)
+    {
+        _lock.EnterReadLock();
+        try
+        {
+            int effectiveSize = Math.Min(sampleSize, _size);
+            var sample = new int[effectiveSize];
+            for (int i = 0; i < effectiveSize; i++)
+                sample[i] = _bits[i] ? 1 : 0;
+            return sample;
+        }
+        finally
+        {
+            _lock.ExitReadLock();
+        }
+    }
+
+    /// <summary>
+    /// Devuelve las posiciones que generaría un ítem si se añadiera, sin modificar
+    /// el filtro. Útil para visualizar qué bits dispara un username concreto.
+    /// </summary>
+    public int[] GetPositionsFor(T item)
+    {
+        return GetPositions(item).ToArray();
+    }
+
     /// <summary>m = -(n * ln(p)) / (ln(2)²)</summary>
     public static int OptimalSize(int n, double p)
         => (int)Math.Ceiling(-n * Math.Log(p) / (Math.Log(2) * Math.Log(2)));
