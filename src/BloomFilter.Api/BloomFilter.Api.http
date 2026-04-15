@@ -1,0 +1,6 @@
+@BloomFilter.Api_HostAddress = http://localhost:5219
+
+GET {{BloomFilter.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
